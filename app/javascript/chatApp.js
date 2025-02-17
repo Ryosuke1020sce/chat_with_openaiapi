@@ -7,9 +7,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const formData = new FormData(form);
     const token = document.querySelector('meta[name="csrf-token"]').content;
     const promptContent = form.querySelector('textarea').value;
-    appendMessageElement(promptContent);
+    const targetElement = appendMessageElement(promptContent);
     form.reset();
-    sendPrompt(formData, token);
+    sendPrompt(formData, token, targetElement);
   }
 
   function appendMessageElement(promptContent){
@@ -26,19 +26,23 @@ document.addEventListener('DOMContentLoaded', () => {
     `;
     messagesList.appendChild(messageElement);
     scrollToBottom();
+    return messageElement.querySelector('.response-text');
   }
 
-  function sendPrompt(formData, token) {
+  function sendPrompt(formData, token, targetElement) {
     fetch(form.action, {
       method: 'POST',
       headers:{
-        'Accept': 'application/json',
+        'Accept' => 'application/json',
         'X-CSRF-Token': token
       },
       body: formData
     })
-    .then(response => response.json());
-    }
+    .then(response => response.json())
+    .then(data => {
+      displayResponse(data.response, targetElement);
+    })
+    .catch(error => handleAPIError(error, targetElement));
   }
 
   // 各要素を取得
