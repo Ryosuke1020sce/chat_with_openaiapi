@@ -33,7 +33,7 @@ document.addEventListener('DOMContentLoaded', () => {
     fetch(form.action, {
       method: 'POST',
       headers:{
-        'Accept' => 'application/json',
+        'Accept' : 'application/json',
         'X-CSRF-Token': token
       },
       body: formData

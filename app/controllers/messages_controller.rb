@@ -14,8 +14,8 @@ class MessagesController < ApplicationController
       response_body = JSON.parse(response.body)
       @message.response = response_body['choices'][0]['message']['content']
       if @message.save
-        # render json: { response: @message.response }
-        redirect_to root_path
+        render json: { response: @message.response }
+        # redirect_to root_path
       else
         render json: { error: @message.errors.full_messages.join(', ') }, status: :unprocessable_entity
       end
