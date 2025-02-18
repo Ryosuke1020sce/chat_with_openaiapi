@@ -1,3 +1,5 @@
+<% if @chat_thread %>
+<h1 id="thread-title"><%= @chat_thread.title %></h1>
 <div id="thread-controls">
   <button id="new-thread-btn" class="thread-control-btn">+</button>
   <button id="show-threads-btn" class="thread-control-btn">❏</button>
@@ -5,8 +7,8 @@
 
 <div id="chat-container">
   <div id="messages-list">
-    <% if @messages.present? %>
-      <% @messages.each do |message| %>
+      <% if @chat_thread.messages.present? %>
+        <% @chat_thread.messages.each do |message| %>
         <% if message.prompt.present? && message.response.present? %>
           <div class="prompt-box">
             <p class="prompt">You:</p>
@@ -22,10 +24,19 @@
   </div>
 </div>
 
-<%= form_with(id: 'generation-form') do |form| %>
+<%= form_with(model: [@chat_thread, @message], id: 'generation-form', remote: true) do |form| %>
   <div class="textarea-with-submit-inside">
     <%= form.text_area :prompt, class: "rounded-corners" %>
     <%= form.submit '↑', class: "submit-within-textarea rounded-corners" %>
+  </div>
+<% end %>
+
+<% else %>
+  <div id="thread-controls">
+    <button id="show-threads-btn" class="thread-control-btn">❏</button>
+  </div>
+  <div class="center-container">
+    <button id="new-thread-btn">Start New Chat ▶</button>
   </div>
 <% end %>
 

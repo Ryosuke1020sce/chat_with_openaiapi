@@ -44,6 +44,9 @@ document.addEventListener('DOMContentLoaded', () => {
     .then(response => response.json())
     .then(data => {
       displayResponse(data.response, targetElement);
+      if (data.thread_title) {
+        updateThreadTitleDisplay(data.thread_title);
+      }      
     })
     .catch(error => handleAPIError(error, targetElement));
   }
@@ -57,6 +60,16 @@ document.addEventListener('DOMContentLoaded', () => {
         'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]').content
       }
     })
+    .then(response => response.json())
+    .then(data => {
+      if (data.chat_thread) {
+        history.pushState(null, '', `/chat_threads/${data.chat_thread.id}`);
+        updateChatInterface(data.chat_thread, []);
+      } else {
+        console.error('新規スレッドの作成に失敗しました', data.errors);
+      }
+    })
+    .catch(error => console.error('新規スレッドの作成に失敗しました', error));
   }
 
   function fetchChatThreads() {
@@ -97,6 +110,7 @@ document.addEventListener('DOMContentLoaded', () => {
     .then(data => {
       history.pushState(null, '', `/chat_threads/${chatThreadId}`);
       hideThreadsModal();
+      updateChatInterface(data.chat_thread, data.messages);
     })
     .catch(error => {
       alert('スレッドの読み込みに失敗しました。もう一度お試しください。');
